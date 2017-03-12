@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">
+            org.hibernate.dialect.MySQLDialect
+        </property>
+        <property name="hibernate.connection.driver_class">
+            com.mysql.jdbc.Driver
+        </property>
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost/autoparts
+        </property>
+        <property name="hibernate.connection.username">
+            root
+        </property>
+        <property name="hibernate.connection.password">
+            root
+        </property>
+        <property name="hibernate.physical_naming_strategy">
+            OurPhysicalNamingStrategy
+        </property>
+        <property name="hibernate.show_sql">
+            true
+        </property>
+        <mapping class="Applicability" />
+        <mapping class="Car" />
+        <mapping class="City" />
+        <mapping class="Client" />
+        <mapping class="Country" />
+        <mapping class="Producer" />
+        <mapping class="Product" />
+        <mapping class="Product.Group" />
+        <mapping class="Product.Type" />
+        <mapping class="Purchase" />
+        <mapping class="Purchase.Product" />
+        <mapping class="Sale" />
+        <mapping class="Sale.Product" />
+        <mapping class="Store" />
+        <mapping class="Supplier" />
+        <mapping class="Test" />
+        <mapping class="User" />
+        <mapping class="User.Role" />
+    </session-factory>
+</hibernate-configuration>
