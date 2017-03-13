@@ -1,63 +1,54 @@
+CREATE SCHEMA `autoparts` ;
+
 USE autoparts;
 
-#заказы поставщикам
-CREATE TABLE tbl_Purchases(
-	PurchaseID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	PurchaseDate datetime NULL,
-	StoreID int NULL,
-	SupplierID int NULL,
-	CreatorID int NULL,
-	Amount int NULL,
-	Status nvarchar(255) NOT NULL DEFAULT '',
-	ArrivalDate datetime NULL,
+#роли пользователей	
+CREATE TABLE tbl_UserRoles(
+	UserRoleID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	UserRole nvarchar(255) NOT NULL DEFAULT ''
+);
+#справочник польщователей
+CREATE TABLE tbl_Users(
+	UserID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	UserName nvarchar(255) NULL,
+	Password nvarchar(255) NOT NULL DEFAULT '', #тут нужно шифрование
+	UserRoleID int NULL,
+	BirthDate datetime NULL,
+	Email nvarchar(255) NOT NULL DEFAULT '',
+	Title nvarchar(255) NOT NULL DEFAULT '',
 	Notes nvarchar(255) NOT NULL DEFAULT '',
-	AddTime datetime NULL
+	LastLoginTime datetime NULL,
+	LastLogoutTime datetime NULL,
+	AddTime datetime NULL,
+	Status bit NOT NULL DEFAULT 0
+    ,FOREIGN KEY (UserRoleID)
+	REFERENCES tbl_userroles(UserRoleID)
 	);
-#заказанные товары поставщика
-CREATE TABLE tbl_PurchasesProducts(
-	PurchasesProductsID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	ProductID int NULL,	
-	Quantity float NULL,
-	Price float NULL,
-	Amount float NULL,
-	Party nvarchar(255) NOT NULL DEFAULT '',
+#справочник торговых точек
+CREATE TABLE tbl_Stores(
+	StoreID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	Name nvarchar(255) NOT NULL DEFAULT '',
+	Address nvarchar(255) NOT NULL DEFAULT '',
+	Phone nvarchar(255) NOT NULL DEFAULT '',
 	Notes nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL,
-	PurchaseID int NULL
-	);
-#справочник товаров
-CREATE TABLE tbl_Products(
-	ProductID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	Code nvarchar(255) NOT NULL DEFAULT '',
-	Name nvarchar(255) NOT NULL DEFAULT '',
-	ProductGroupID int NULL,
-	ProductTypeID int NULL,
-	Price int NULL,
-	Unit nvarchar(255) NOT NULL DEFAULT '',
-	Status nvarchar(255) NOT NULL DEFAULT '',
-	ProducerID int NULL,
-	Notes nvarchar(1024) NOT NULL DEFAULT '',
-	AddTime datetime NULL,
 	CreatorID int NULL,
-	Original bit NOT NULL DEFAULT 0
+    FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
 	);
-#группы товаров
-CREATE TABLE tbl_ProductGroups(
-	ProductGroupID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	ProductGroup nvarchar(255) NOT NULL DEFAULT ''
-	);
-#тип товаров, входит в группы
-CREATE TABLE tbl_ProductTypes(
-	ProductTypeID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	ProductType nvarchar(255) NOT NULL DEFAULT '',
-	ProductGroupID int NULL
-	);
-#производители
-CREATE TABLE tbl_Producers(
-	ProducerID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	Name nvarchar(255) NOT NULL DEFAULT '',
-	Code nvarchar(255) NOT NULL DEFAULT '',
+#страны
+CREATE TABLE tbl_Countries(
+	CountryID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	Country nvarchar(255) NOT NULL DEFAULT '',
+	CountryCode nvarchar(255) NOT NULL DEFAULT ''
+);
+#города, входят в страны
+CREATE TABLE tbl_Cities(
+	CityID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	City nvarchar(255) NOT NULL DEFAULT '',
 	CountryID int NULL
+    ,FOREIGN KEY (CountryID)
+	REFERENCES tbl_countries(CountryID) 
 );
 #поставщики
 CREATE TABLE tbl_Suppliers(
@@ -75,19 +66,94 @@ CREATE TABLE tbl_Suppliers(
 	Status nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL,
 	CreatorID int NULL
+    ,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+    ,FOREIGN KEY (CityID)
+	REFERENCES tbl_cities(CityID)
+    ,FOREIGN KEY (CountryID)
+	REFERENCES tbl_countries(CountryID)    
 	);
-#страны
-CREATE TABLE tbl_Countries(
-	CountryID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	Country nvarchar(255) NOT NULL DEFAULT '',
-	CountryCode nvarchar(255) NOT NULL DEFAULT ''
-);
-#города, входят в страны
-CREATE TABLE tbl_Cities(
-	CityID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	City nvarchar(255) NOT NULL DEFAULT '',
+#группы товаров
+CREATE TABLE tbl_ProductGroups(
+	ProductGroupID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	ProductGroup nvarchar(255) NOT NULL DEFAULT ''
+	);
+#тип товаров, входит в группы
+CREATE TABLE tbl_ProductTypes(
+	ProductTypeID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	ProductType nvarchar(255) NOT NULL DEFAULT '',
+	ProductGroupID int NULL
+    ,FOREIGN KEY (ProductGroupID)
+	REFERENCES tbl_productgroups(ProductGroupID)
+	);
+#производители
+CREATE TABLE tbl_Producers(
+	ProducerID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	Name nvarchar(255) NOT NULL DEFAULT '',
+	Code nvarchar(255) NOT NULL DEFAULT '',
 	CountryID int NULL
+    ,FOREIGN KEY (CountryID)
+	REFERENCES tbl_countries(CountryID)
 );
+#справочник товаров
+CREATE TABLE tbl_Products(
+	ProductID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	Code nvarchar(255) NOT NULL DEFAULT '',
+	Name nvarchar(255) NOT NULL DEFAULT '',
+	ProductGroupID int NULL,
+	ProductTypeID int NULL,
+	Price int NULL,
+	Unit nvarchar(255) NOT NULL DEFAULT '',
+	Status nvarchar(255) NOT NULL DEFAULT '',
+	ProducerID int NULL,
+	Notes nvarchar(1024) NOT NULL DEFAULT '',
+	AddTime datetime NULL,
+	CreatorID int NULL,
+	Original bit NOT NULL DEFAULT 0
+    ,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+    ,FOREIGN KEY (ProductGroupID)
+	REFERENCES tbl_productgroups(ProductGroupID)
+    ,FOREIGN KEY (ProductTypeID)
+	REFERENCES tbl_producttypes(ProductTypeID)
+    ,FOREIGN KEY (ProducerID)
+	REFERENCES tbl_producers(ProducerID)
+	);
+#заказы поставщикам
+CREATE TABLE tbl_Purchases(
+	PurchaseID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	PurchaseDate datetime NULL,
+	StoreID int NULL,
+	SupplierID int NULL,
+	CreatorID int NULL,
+	Amount int NULL,
+	Status nvarchar(255) NOT NULL DEFAULT '',
+	ArrivalDate datetime NULL,
+	Notes nvarchar(255) NOT NULL DEFAULT '',
+	AddTime datetime NULL
+    ,FOREIGN KEY (StoreID)
+	REFERENCES tbl_stores(StoreID)
+	,FOREIGN KEY (SupplierID)
+	REFERENCES tbl_suppliers(SupplierID)
+	,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+	);
+#заказанные товары поставщика
+CREATE TABLE tbl_PurchasesProducts(
+	PurchasesProductsID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	ProductID int NULL,	
+	Quantity float NULL,
+	Price float NULL,
+	Amount float NULL,
+	Party nvarchar(255) NOT NULL DEFAULT '',
+	Notes nvarchar(255) NOT NULL DEFAULT '',
+	AddTime datetime NULL,
+	PurchaseID int NULL
+    ,FOREIGN KEY (ProductID)
+	REFERENCES tbl_products(ProductID)
+    ,FOREIGN KEY (PurchaseID)
+	REFERENCES tbl_purchases(PurchaseID)
+	);
 #справочник автомобилей
 CREATE TABLE tbl_Cars(
 	CarID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -95,13 +161,19 @@ CREATE TABLE tbl_Cars(
 	Model nvarchar(255) NOT NULL DEFAULT '',
 	ProduceYear datetime NULL,
 	Engine nvarchar(255) NOT NULL DEFAULT '',
-	BodyType nvarchar(255) NOT NULL DEFAULT ''
+	BodyType nvarchar(255) NOT NULL DEFAULT ''    
+    ,FOREIGN KEY (ProducerID)
+	REFERENCES tbl_producers(ProducerID)
 	);
 #таблица для связи многие ко многим между авто и запчастями
 CREATE TABLE tbl_Applicability(
 	ApplicabilityID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	CarID int NULL,
 	ProductID int NULL
+    ,FOREIGN KEY (ProductID)
+	REFERENCES tbl_products(ProductID)
+    ,FOREIGN KEY (CarID)
+	REFERENCES tbl_cars(CarID)
 	);
 #справочник клиентов
 CREATE TABLE tbl_Clients(
@@ -118,6 +190,12 @@ CREATE TABLE tbl_Clients(
 	CreatorID int NULL,
 	Status nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL
+    ,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+    ,FOREIGN KEY (CityID)
+	REFERENCES tbl_cities(CityID)
+    ,FOREIGN KEY (CountryID)
+	REFERENCES tbl_countries(CountryID) 
 	);
 #заказы/продажи клиентов
 CREATE TABLE tbl_Sales(
@@ -132,6 +210,12 @@ CREATE TABLE tbl_Sales(
 	SaleStatus nvarchar(255) NOT NULL DEFAULT '',
 	DoneDate datetime NULL,
 	AddTime datetime NULL
+    ,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+    ,FOREIGN KEY (StoreID)
+	REFERENCES tbl_stores(StoreID)
+    ,FOREIGN KEY (ClientID)
+	REFERENCES tbl_clients(ClientID) 
 	);
 #заказанные товары клментов
 CREATE TABLE tbl_SalesProducts(
@@ -143,38 +227,15 @@ CREATE TABLE tbl_SalesProducts(
 	Notes nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL,
 	CreatorID int NULL,
-	SaleID int NULL
+	SaleID int NULL    
+    ,FOREIGN KEY (CreatorID)
+	REFERENCES tbl_users(UserID)
+    ,FOREIGN KEY (SaleID)
+	REFERENCES tbl_sales(SaleID)
+    ,FOREIGN KEY (ProductID)
+	REFERENCES tbl_products(ProductID)
 	);
-#справочник торговых точек
-CREATE TABLE tbl_Stores(
-	StoreID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	Name nvarchar(255) NOT NULL DEFAULT '',
-	Address nvarchar(255) NOT NULL DEFAULT '',
-	Phone nvarchar(255) NOT NULL DEFAULT '',
-	Notes nvarchar(255) NOT NULL DEFAULT '',
-	AddTime datetime NULL,
-	CreatorID int NULL
-	);
-#справочник польщователей
-CREATE TABLE tbl_Users(
-	UserID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	UserName nvarchar(255) NULL,
-	Password nvarchar(255) NOT NULL DEFAULT '', #тут нужно шифрование
-	UserRoleID int NULL,
-	BirthDate datetime NULL,
-	Email nvarchar(255) NOT NULL DEFAULT '',
-	Title nvarchar(255) NOT NULL DEFAULT '',
-	Notes nvarchar(255) NOT NULL DEFAULT '',
-	LastLoginTime datetime NULL,
-	LastLogoutTime datetime NULL,
-	AddTime datetime NULL,
-	Status bit NOT NULL DEFAULT 0
-	);
-#роли пользователей	
-CREATE TABLE tbl_UserRoles(
-	UserRoleID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	UserRole nvarchar(255) NOT NULL DEFAULT ''
-);
+
 
 INSERT INTO `autoparts`.`tbl_countries`
 (
@@ -203,22 +264,22 @@ INSERT INTO `autoparts`.`tbl_cities`
 VALUES
 (
 'Moscow' ,
-789 ),
+3 ),
 (
 'NY',
 1 ),
 (
 'Lomonosov',
-789 ),
+3 ),
 (
 'Paris',
-33 ),
+2 ),
 (
 'Kronshtadt' ,
-789 ),
+3 ),
 (
 'SPB' ,
-789 );
+3 );
 
 INSERT INTO `autoparts`.`tbl_producers`
 (
@@ -234,12 +295,12 @@ VALUES
 (
 'Valeo' ,
 'Code:11' ,
-49 ),
+5 ),
 
 (
 'LUK' ,
 'Code:3' ,
-789 ),
+3 ),
 
 (
 'Votex' ,
@@ -249,23 +310,23 @@ VALUES
 (
 'Brembo',
 'Code:666' ,
-49 ),
+5 ),
 (
 'Mercedes Benz',
 '111' ,
-49 ),
+5 ),
 (
 'VolksWagen',
 'Code:6126' ,
-49 ),
+5 ),
 (
 'Fiat',
 'Code:661' ,
-72 ),
+2 ),
 (
 'Mitsubishi',
 'Code:12' ,
-27 ),
+7 ),
 (
 'Man',
 'Code:321' ,
