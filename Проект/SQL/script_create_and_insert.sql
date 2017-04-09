@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS `autoparts` ;
+
 CREATE SCHEMA `autoparts` ;
 
 USE autoparts;
@@ -7,7 +9,7 @@ CREATE TABLE tbl_UserRoles(
 	UserRoleID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	UserRole nvarchar(255) NOT NULL DEFAULT ''
 );
-#справочник польщователей
+#справочник пользователей
 CREATE TABLE tbl_Users(
 	UserID int AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	UserName nvarchar(255) NULL,
@@ -22,7 +24,7 @@ CREATE TABLE tbl_Users(
 	AddTime datetime NULL,
 	Status bit NOT NULL DEFAULT 0
     ,FOREIGN KEY (UserRoleID)
-	REFERENCES tbl_userroles(UserRoleID)
+	REFERENCES tbl_UserRoles(UserRoleID)
 	);
 #справочник торговых точек
 CREATE TABLE tbl_Stores(
@@ -34,7 +36,7 @@ CREATE TABLE tbl_Stores(
 	AddTime datetime NULL,
 	CreatorID int NULL,
     FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
 	);
 #страны
 CREATE TABLE tbl_Countries(
@@ -48,7 +50,7 @@ CREATE TABLE tbl_Cities(
 	City nvarchar(255) NOT NULL DEFAULT '',
 	CountryID int NULL
     ,FOREIGN KEY (CountryID)
-	REFERENCES tbl_countries(CountryID) 
+	REFERENCES tbl_Countries(CountryID) 
 );
 #поставщики
 CREATE TABLE tbl_Suppliers(
@@ -67,11 +69,11 @@ CREATE TABLE tbl_Suppliers(
 	AddTime datetime NULL,
 	CreatorID int NULL
     ,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
     ,FOREIGN KEY (CityID)
-	REFERENCES tbl_cities(CityID)
+	REFERENCES tbl_Cities(CityID)
     ,FOREIGN KEY (CountryID)
-	REFERENCES tbl_countries(CountryID)    
+	REFERENCES tbl_Countries(CountryID)    
 	);
 #группы товаров
 CREATE TABLE tbl_ProductGroups(
@@ -84,7 +86,7 @@ CREATE TABLE tbl_ProductTypes(
 	ProductType nvarchar(255) NOT NULL DEFAULT '',
 	ProductGroupID int NULL
     ,FOREIGN KEY (ProductGroupID)
-	REFERENCES tbl_productgroups(ProductGroupID)
+	REFERENCES tbl_ProductGroups(ProductGroupID)
 	);
 #производители
 CREATE TABLE tbl_Producers(
@@ -93,7 +95,7 @@ CREATE TABLE tbl_Producers(
 	Code nvarchar(255) NOT NULL DEFAULT '',
 	CountryID int NULL
     ,FOREIGN KEY (CountryID)
-	REFERENCES tbl_countries(CountryID)
+	REFERENCES tbl_Countries(CountryID)
 );
 #справочник товаров
 CREATE TABLE tbl_Products(
@@ -111,13 +113,13 @@ CREATE TABLE tbl_Products(
 	CreatorID int NULL,
 	Original bit NOT NULL DEFAULT 0
     ,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
     ,FOREIGN KEY (ProductGroupID)
-	REFERENCES tbl_productgroups(ProductGroupID)
+	REFERENCES tbl_ProductGroups(ProductGroupID)
     ,FOREIGN KEY (ProductTypeID)
-	REFERENCES tbl_producttypes(ProductTypeID)
+	REFERENCES tbl_ProductTypes(ProductTypeID)
     ,FOREIGN KEY (ProducerID)
-	REFERENCES tbl_producers(ProducerID)
+	REFERENCES tbl_Producers(ProducerID)
 	);
 #заказы поставщикам
 CREATE TABLE tbl_Purchases(
@@ -132,11 +134,11 @@ CREATE TABLE tbl_Purchases(
 	Notes nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL
     ,FOREIGN KEY (StoreID)
-	REFERENCES tbl_stores(StoreID)
+	REFERENCES tbl_Stores(StoreID)
 	,FOREIGN KEY (SupplierID)
-	REFERENCES tbl_suppliers(SupplierID)
+	REFERENCES tbl_Suppliers(SupplierID)
 	,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
 	);
 #заказанные товары поставщика
 CREATE TABLE tbl_PurchasesProducts(
@@ -150,9 +152,9 @@ CREATE TABLE tbl_PurchasesProducts(
 	AddTime datetime NULL,
 	PurchaseID int NULL
     ,FOREIGN KEY (ProductID)
-	REFERENCES tbl_products(ProductID)
+	REFERENCES tbl_Products(ProductID)
     ,FOREIGN KEY (PurchaseID)
-	REFERENCES tbl_purchases(PurchaseID)
+	REFERENCES tbl_Purchases(PurchaseID)
 	);
 #справочник автомобилей
 CREATE TABLE tbl_Cars(
@@ -163,7 +165,7 @@ CREATE TABLE tbl_Cars(
 	Engine nvarchar(255) NOT NULL DEFAULT '',
 	BodyType nvarchar(255) NOT NULL DEFAULT ''    
     ,FOREIGN KEY (ProducerID)
-	REFERENCES tbl_producers(ProducerID)
+	REFERENCES tbl_Producers(ProducerID)
 	);
 #таблица для связи многие ко многим между авто и запчастями
 CREATE TABLE tbl_Applicability(
@@ -171,9 +173,9 @@ CREATE TABLE tbl_Applicability(
 	CarID int NULL,
 	ProductID int NULL
     ,FOREIGN KEY (ProductID)
-	REFERENCES tbl_products(ProductID)
+	REFERENCES tbl_Products(ProductID)
     ,FOREIGN KEY (CarID)
-	REFERENCES tbl_cars(CarID)
+	REFERENCES tbl_Cars(CarID)
 	);
 #справочник клиентов
 CREATE TABLE tbl_Clients(
@@ -191,11 +193,11 @@ CREATE TABLE tbl_Clients(
 	Status nvarchar(255) NOT NULL DEFAULT '',
 	AddTime datetime NULL
     ,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
     ,FOREIGN KEY (CityID)
-	REFERENCES tbl_cities(CityID)
+	REFERENCES tbl_Cities(CityID)
     ,FOREIGN KEY (CountryID)
-	REFERENCES tbl_countries(CountryID) 
+	REFERENCES tbl_Countries(CountryID) 
 	);
 #заказы/продажи клиентов
 CREATE TABLE tbl_Sales(
@@ -211,11 +213,11 @@ CREATE TABLE tbl_Sales(
 	DoneDate datetime NULL,
 	AddTime datetime NULL
     ,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
     ,FOREIGN KEY (StoreID)
-	REFERENCES tbl_stores(StoreID)
+	REFERENCES tbl_Stores(StoreID)
     ,FOREIGN KEY (ClientID)
-	REFERENCES tbl_clients(ClientID) 
+	REFERENCES tbl_Clients(ClientID) 
 	);
 #заказанные товары клментов
 CREATE TABLE tbl_SalesProducts(
@@ -229,15 +231,15 @@ CREATE TABLE tbl_SalesProducts(
 	CreatorID int NULL,
 	SaleID int NULL    
     ,FOREIGN KEY (CreatorID)
-	REFERENCES tbl_users(UserID)
+	REFERENCES tbl_Users(UserID)
     ,FOREIGN KEY (SaleID)
-	REFERENCES tbl_sales(SaleID)
+	REFERENCES tbl_Sales(SaleID)
     ,FOREIGN KEY (ProductID)
-	REFERENCES tbl_products(ProductID)
+	REFERENCES tbl_Products(ProductID)
 	);
 
 
-INSERT INTO `autoparts`.`tbl_countries`
+INSERT INTO `autoparts`.`tbl_Countries`
 (
 `Country`,
 `CountryCode`)
@@ -257,7 +259,7 @@ VALUES
 ('Japan' ,
 '27' );
 
-INSERT INTO `autoparts`.`tbl_cities`
+INSERT INTO `autoparts`.`tbl_Cities`
 (
 `City`,
 `CountryID`)
@@ -281,7 +283,7 @@ VALUES
 'SPB' ,
 3 );
 
-INSERT INTO `autoparts`.`tbl_producers`
+INSERT INTO `autoparts`.`tbl_Producers`
 (
 `Name`,
 `Code`,
@@ -333,7 +335,7 @@ VALUES
 1 );
 
 
-INSERT INTO `autoparts`.`tbl_cars`
+INSERT INTO `autoparts`.`tbl_Cars`
 (
 `ProducerID`,
 `Model`,
@@ -377,7 +379,7 @@ VALUES
 'truck' );
 
 
-INSERT INTO `autoparts`.`tbl_userroles`
+INSERT INTO `autoparts`.`tbl_UserRoles`
 (
 `UserRole`)
 VALUES
@@ -391,7 +393,7 @@ VALUES
 (
 'user' );
 
-INSERT INTO `autoparts`.`tbl_users` 
+INSERT INTO `autoparts`.`tbl_Users` 
 ( 
 UserName,
 UserRoleID, 
@@ -430,7 +432,7 @@ VALUES
 'evening');
 
 
-INSERT INTO `autoparts`.`tbl_clients`
+INSERT INTO `autoparts`.`tbl_Clients`
 (
 `Name`,
 `LegalForm`,
@@ -469,7 +471,7 @@ VALUES
 
 
 
-INSERT INTO `autoparts`.`tbl_productgroups`
+INSERT INTO `autoparts`.`tbl_ProductGroups`
 (
 `ProductGroup`)
 VALUES
@@ -490,7 +492,7 @@ VALUES
 
 
 
-INSERT INTO `autoparts`.`tbl_producttypes`
+INSERT INTO `autoparts`.`tbl_ProductTypes`
 (
 `ProductType`,
 `ProductGroupID`)
@@ -504,7 +506,7 @@ VALUES
 
 
 
-INSERT INTO `autoparts`.`tbl_products`
+INSERT INTO `autoparts`.`tbl_Products`
 (
 `Code`,
 `Name`,
@@ -553,7 +555,7 @@ null ,
 8000 ,
 'liters');
 
-INSERT INTO `autoparts`.`tbl_stores`
+INSERT INTO `autoparts`.`tbl_Stores`
 (
 `Name`,
 `Address`,
@@ -565,7 +567,7 @@ VALUES
 '4555599' );
 
 
-INSERT INTO `autoparts`.`tbl_suppliers`
+INSERT INTO `autoparts`.`tbl_Suppliers`
 (
 `Name`,
 `LegalForm`,
