@@ -611,3 +611,11 @@ VALUES
 '4566744' ,
 'united@gmail.com ',
 'united.ru' );
+INSERT INTO autoparts.tbl_sales
+VALUES (8,'1235', DATE_ADD(CURDATE(), INTERVAL -30 DAY),2,'cash',1,'',1,'1',null,CURDATE())
+,(2,'1235', DATE_ADD(CURDATE(), INTERVAL -30 DAY),2,'cash',1,'',1,'1',null,CURDATE())
+,(3,'1236', DATE_ADD(CURDATE(), INTERVAL -35 DAY),3,'cash',1,'',1,'2',null,CURDATE())
+,(4,'1237', DATE_ADD(CURDATE(), INTERVAL -35 DAY),1,'cash',1,'',1,'1',null,CURDATE())
+,(5,'1238', DATE_ADD(CURDATE(), INTERVAL -36 DAY),2,'cash',1,'',1,'1',null,CURDATE())
+,(6,'1239', DATE_ADD(CURDATE(), INTERVAL -36 DAY),4,'cash',1,'',1,'3',null,CURDATE())
+,(7,'1244', DATE_ADD(CURDATE(), INTERVAL -36 DAY),4,'cash',1,'',1,'1',null,CURDATE())
