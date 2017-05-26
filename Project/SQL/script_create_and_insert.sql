@@ -619,3 +619,18 @@ VALUES (8,'1235', DATE_ADD(CURDATE(), INTERVAL -30 DAY),2,'cash',1,'',1,'1',null
 ,(5,'1238', DATE_ADD(CURDATE(), INTERVAL -36 DAY),2,'cash',1,'',1,'1',null,CURDATE())
 ,(6,'1239', DATE_ADD(CURDATE(), INTERVAL -36 DAY),4,'cash',1,'',1,'3',null,CURDATE())
 ,(7,'1244', DATE_ADD(CURDATE(), INTERVAL -36 DAY),4,'cash',1,'',1,'1',null,CURDATE())
+;
+INSERT INTO autoparts.tbl_salesproducts
+VALUES(13, 1, 1, null, null, '',CURDATE(),1,8)
+,(2, 4, 1, null, null, '',CURDATE(),1,1)
+,(3, 3, 100, null, null, '',CURDATE(),1,2)
+,(4, 2, 35, null, null, '',CURDATE(),1,3)
+,(5, 2, 10, null, null, '',CURDATE(),1,4)
+,(6, 1, 10, null, null, '',CURDATE(),1,4)
+,(7, 1, 1, null, null, '',CURDATE(),1,5)
+,(8, 2, 1, null, null, '',CURDATE(),1,5)
+,(9, 1, 100, null, null, '',CURDATE(),1,7)
+,(10, 3, 50, null, null, '',CURDATE(),1,7)
+,(11, 4, 1, null, null, '',CURDATE(),1,6)
+,(12, 4, 7, null, null, '',CURDATE(),1,8);
+
